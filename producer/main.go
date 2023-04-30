@@ -12,8 +12,6 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
-var producer *nsq.Producer
-
 func publish(wg *sync.WaitGroup, producer *nsq.Producer, topic string, channel string, delay time.Duration, amount int) {
 	defer wg.Done()
 	for i := 1; i <= amount; i++ {
@@ -28,7 +26,7 @@ func publish(wg *sync.WaitGroup, producer *nsq.Producer, topic string, channel s
 	}
 }
 
-func run() {
+func main() {
 	nsqConfig := nsq.NewConfig()
 
 	producer, err := nsq.NewProducer("127.0.0.1:4150", nsqConfig)
@@ -42,19 +40,13 @@ func run() {
 
 	for i := min; i <= max; i++ {
 		wg.Add(1)
-		go publish(&wg, producer, fmt.Sprintf("go-nsq-%v", i), fmt.Sprintf("go-nsq-%v", i), ((time.Second / 4) * time.Duration(i)), ((max+1)*50)-(min*10))
+		go publish(&wg, producer, fmt.Sprintf("go-nsq-%v", i), fmt.Sprintf("go-nsq-%v", i), ((time.Second / 4) * time.Duration(i)), ((max+1)*5)-(min*1))
 	}
 
 	wg.Wait()
-}
 
-func main() {
 	exitChan := make(chan os.Signal, 1)
 	signal.Notify(exitChan, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-
-	go func() {
-		run()
-	}()
 
 	<-exitChan
 

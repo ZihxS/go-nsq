@@ -10,14 +10,6 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
-var (
-	consumer1 *nsq.Consumer
-	consumer2 *nsq.Consumer
-	consumer3 *nsq.Consumer
-	consumer4 *nsq.Consumer
-	consumer5 *nsq.Consumer
-)
-
 type msgHandler struct{}
 
 func (h *msgHandler) HandleMessage(msg *nsq.Message) error {
@@ -30,7 +22,7 @@ func (h *msgHandler) HandleMessage(msg *nsq.Message) error {
 	return nil
 }
 
-func run() {
+func main() {
 	nsqConfig := nsq.NewConfig()
 
 	// consumer 1
@@ -92,15 +84,9 @@ func run() {
 	if err = consumer5.ConnectToNSQLookupd("localhost:4161"); err != nil {
 		panic(err)
 	}
-}
 
-func main() {
 	exitChan := make(chan os.Signal, 1)
 	signal.Notify(exitChan, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-
-	go func() {
-		run()
-	}()
 
 	<-exitChan
 
