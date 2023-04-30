@@ -40,7 +40,7 @@ func main() {
 
 	for i := min; i <= max; i++ {
 		wg.Add(1)
-		go publish(&wg, producer, fmt.Sprintf("go-nsq-%v", i), fmt.Sprintf("go-nsq-%v", i), ((time.Second / 4) * time.Duration(i)), ((max+1)*50)-(min*i))
+		go publish(&wg, producer, fmt.Sprintf("go-nsq-%v", i), fmt.Sprintf("go-nsq-%v", i), ((time.Second / 4) * time.Duration(i)), ((max+1)*50)-(15*i))
 	}
 
 	wg.Wait()
