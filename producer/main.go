@@ -15,13 +15,13 @@ import (
 func publish(wg *sync.WaitGroup, producer *nsq.Producer, topic string, channel string, delay time.Duration, amount int) {
 	defer wg.Done()
 	for i := 1; i <= amount; i++ {
-		go func(topic string, i int) {
+		go func() {
 			if err := producer.Publish(topic, []byte(fmt.Sprintf("from producer to %v: %v.", topic, i))); err != nil {
 				panic(err)
 			} else {
 				log.Printf("Delivered message to %v\n", topic)
 			}
-		}(topic, i)
+		}()
 		time.Sleep(delay)
 	}
 }
